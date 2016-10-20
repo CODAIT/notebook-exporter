@@ -36,4 +36,6 @@ libraryDependencies += "org.json4s" %% "json4s-core" % json4sDependency
 libraryDependencies += "org.json4s"  %% "json4s-jackson" % json4sDependency
 libraryDependencies += "org.json4s"  %% "json4s-scalaz" % json4sDependency
 
+libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.0" % "test"
+
 assemblyJarName in assembly := "notebook-exporter.jar"
