@@ -1,3 +1,5 @@
+import sbt.Keys._
+
 /*
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,7 +19,7 @@ name := "notebook-exporter"
 
 version := "1.0"
 
-scalaVersion := "2.11.7"
+scalaVersion := "2.11.8"
 
 resolvers += "Local Maven Repository" at "file://" + Path.userHome.absolutePath + "/.m2/repository"
 resolvers += "Typesafe Repo" at "http://repo.typesafe.com/typesafe/releases/"
@@ -27,6 +29,10 @@ resolvers += "Sonatype Repository" at "http://oss.sonatype.org/content/repositor
 val json4sDependency = "3.2.11"
 val sparkDependency = "2.0.1"
 val zeppelinDependency = "0.6.2"
+
+libraryDependencies += "org.scala-lang" % "scala-reflect" % scalaVersion.value
+libraryDependencies += "org.scala-lang" % "scala-compiler" % scalaVersion.value
+libraryDependencies += "org.scala-lang" % "scala-library"  % scalaVersion.value
 
 libraryDependencies += "org.apache.zeppelin" % "zeppelin-zengine" % zeppelinDependency
 
