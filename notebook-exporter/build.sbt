@@ -33,6 +33,7 @@ val zeppelinDependency = "0.6.2"
 libraryDependencies += "org.scala-lang" % "scala-reflect" % scalaVersion.value
 libraryDependencies += "org.scala-lang" % "scala-compiler" % scalaVersion.value
 libraryDependencies += "org.scala-lang" % "scala-library"  % scalaVersion.value
+libraryDependencies += "com.github.scala-incubator.io" %% "scala-io-file" % "0.4.3"
 
 libraryDependencies += "org.apache.zeppelin" % "zeppelin-zengine" % zeppelinDependency
 

@@ -21,6 +21,8 @@ import java.nio.file.{Files, Paths}
 import scala.reflect.runtime._
 import scala.tools.reflect.ToolBoxFactory
 
+import scalax.file.Path
+
 class RuntimeCompiler (targetDirectory: String) {
 
   val classLoader = Thread.currentThread.getContextClassLoader
@@ -32,10 +34,16 @@ class RuntimeCompiler (targetDirectory: String) {
 
   if (Files.exists(Paths.get(targetDirectory)) == true) {
     println("Existing target directory will be cleaned : " + targetDirectory) //scalastyle:ignore
-    Files.delete(Paths.get(targetDirectory))
+
+    // remove all files from target folder recursively
+    Path.fromString(targetDirectory).deleteRecursively(true, true)
+
+    // recreate target folder for new compilation
     Files.createDirectory(Paths.get(targetDirectory))
   } else {
     println("Creating target directory : " + targetDirectory) //scalastyle:ignore
+
+    // create target folder for new compilation
     Files.createDirectory(Paths.get(targetDirectory))
   }
 
@@ -50,8 +58,6 @@ class RuntimeCompiler (targetDirectory: String) {
 
     toolbox.compile(tree)
   }
-
-
 }
 
 object RuntimeCompiler;
