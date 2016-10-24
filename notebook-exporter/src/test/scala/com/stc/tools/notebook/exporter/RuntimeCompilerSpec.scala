@@ -13,14 +13,11 @@
  */
 package com.stc.tools.notebook.exporter
 
-import java.io.File
-import java.nio.file.{FileSystems, Files, PathMatcher, Paths}
+import java.nio.file.{Paths}
 
 import org.scalatest.FlatSpec
+import scalax.file.Path
 
-/**
-  * Created by lresende on 10/24/16.
-  */
 class RuntimeCompilerSpec extends FlatSpec {
 
   it should "compile a valid generated scala class resource" in {
@@ -34,8 +31,6 @@ class RuntimeCompilerSpec extends FlatSpec {
   }
 
   def isGeneratedFolderCreated() : Boolean = {
-    val generatedDirectory = getClass.getResource("/target/__*")
-    println(generatedDirectory) //scalastyle:ignore
-    true
+    ! Path.fromString("./target/scala-2.11/generated-classes/").descendants().isEmpty
   }
 }
