@@ -15,22 +15,17 @@
  */
 package com.stc.tools.notebook.exporter
 
-import java.io.IOException
+import java.net.{URL, URLClassLoader}
 import java.nio.file.{Files, Paths}
 
+import scala.reflect.internal.util.Position
 import scala.reflect.runtime._
-import scala.tools.reflect.ToolBoxFactory
-
+import scala.tools.nsc.Global
+import scala.tools.nsc.Settings
+import scala.tools.nsc.reporters.ConsoleReporter
 import scalax.file.Path
 
 class RuntimeCompiler (targetDirectory: String) {
-
-  val classLoader = Thread.currentThread.getContextClassLoader
-
-  val factory = new ToolBoxFactory[universe.type](universe) {
-    // note that runtimeMirror() is not thread safe in scala =< 2.10
-    override val mirror = universe.runtimeMirror(classLoader)
-  }
 
   if (Files.exists(Paths.get(targetDirectory)) == true) {
     println("Existing target directory will be cleaned : " + targetDirectory) //scalastyle:ignore
@@ -47,16 +42,29 @@ class RuntimeCompiler (targetDirectory: String) {
     Files.createDirectory(Paths.get(targetDirectory))
   }
 
-  val toolbox = factory.mkToolBox(options = "-d " + targetDirectory)
+  // val classLoader = Thread.currentThread.getContextClassLoader
+  val classLoader = ClassLoader.getSystemClassLoader
+  val urls = classLoader.asInstanceOf[URLClassLoader].getURLs();
+
+  val settings = new Settings
+  for (url <- urls) settings.classpath.append(url.toString)
+
+  settings.outdir.value = Paths.get(targetDirectory).toAbsolutePath.toString
+
+  val compiler = new Global(settings, new ConsoleReporter(settings) {
+    override def printMessage(pos: Position, msg: String) = {
+      println(">>> " + msg) // scalastyle:ignore
+    }
+  })
 
   def compile(sourceFile: String): Unit = {
     val sourceTemplate = "/templates/NotebookApplication.scala"
     val sourceFile = getClass().getResource(sourceTemplate).getPath
     val sourceCode = scala.io.Source.fromFile(sourceFile.toString).mkString
 
-    val tree = toolbox.parse(sourceCode)
+    val run: compiler.Run = new compiler.Run
 
-    toolbox.compile(tree)
+    run.compile(List(sourceFile))
   }
 }
 
