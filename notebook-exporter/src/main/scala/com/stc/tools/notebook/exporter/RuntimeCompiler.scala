@@ -34,7 +34,6 @@ class RuntimeCompiler (targetDirectory: VirtualDirectory) {
 
   val settings = new Settings
   for (url <- urls) {
-    println(url.toString) //scalastyle:ignore
     settings.classpath.append(url.toString)
   }
 
