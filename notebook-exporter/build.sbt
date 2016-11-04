@@ -1,5 +1,3 @@
-import sbt.Keys._
-
 /*
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -27,7 +25,7 @@ resolvers += "Sonatype Repository" at "http://oss.sonatype.org/content/repositor
 
 // Spark dependencies as provided as they are available in spark runtime
 val json4sDependency = "3.2.11"
-val sparkDependency = "2.0.1"
+val sparkDependency = "1.6.2"
 val zeppelinDependency = "0.6.2"
 
 libraryDependencies += "org.scala-lang" % "scala-reflect" % scalaVersion.value
@@ -35,13 +33,19 @@ libraryDependencies += "org.scala-lang" % "scala-compiler" % scalaVersion.value
 libraryDependencies += "org.scala-lang" % "scala-library"  % scalaVersion.value
 libraryDependencies += "com.github.scala-incubator.io" %% "scala-io-file" % "0.4.3"
 
-libraryDependencies += "org.apache.zeppelin" % "zeppelin-zengine" % zeppelinDependency
-
-libraryDependencies += "org.scalaz" %% "scalaz-core" % "7.2.6"
+libraryDependencies += "org.scalaz" %% "scalaz-core" % "7.0.6" // 7.2.6
 libraryDependencies += "org.json4s" %% "json4s-core" % json4sDependency
 libraryDependencies += "org.json4s"  %% "json4s-jackson" % json4sDependency
 libraryDependencies += "org.json4s"  %% "json4s-scalaz" % json4sDependency
 
+libraryDependencies += "org.apache.zeppelin" % "zeppelin-zengine" % zeppelinDependency
+
+libraryDependencies += "org.apache.spark"  %% "spark-core" % sparkDependency exclude("org.scalatest", "scalatest") //scalastyle:ignore
+libraryDependencies += "org.apache.spark"  %% "spark-sql" % sparkDependency exclude("org.scalatest", "scalatest") //scalastyle:ignore
+
+libraryDependencies += "org.slf4j" % "slf4j-api" % "1.7.7"
+
+libraryDependencies += "org.scalactic" %% "scalactic" % "3.0.0"
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.0" % "test"
 
 assemblyJarName in assembly := "notebook-exporter.jar"
