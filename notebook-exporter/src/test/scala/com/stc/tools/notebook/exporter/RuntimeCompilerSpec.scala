@@ -13,24 +13,33 @@
  */
 package com.stc.tools.notebook.exporter
 
-import java.nio.file.{Paths}
+import java.io.File
+import java.nio.file.{Files, Path, Paths}
 
 import org.scalatest.FlatSpec
-import scalax.file.Path
+
+import scala.reflect.internal.util.{BatchSourceFile, SourceFile}
+import scala.reflect.io.VirtualDirectory
+import com.stc.utils.FileUtils
 
 class RuntimeCompilerSpec extends FlatSpec {
 
   it should "compile a valid generated scala class resource" in {
-    val sourceFile = getClass().getResource("/templates/NotebookApplication.scala")
-    val targetDirectory = Paths.get("./target/scala-2.11/generated-classes")
+    val className = "NotebookApplication.scala"
 
-    val compiler = new RuntimeCompiler(targetDirectory.toString)
-    compiler.compile(sourceFile.toString)
+    val sourceFilePath: Path =
+      Paths.get(getClass().getResource("/templates/NotebookApplication.scala").toURI)
 
-    assert(isGeneratedFolderCreated)
-  }
+    val sourceFile = new BatchSourceFile(
+      className,
+      new String(Files.readAllBytes(sourceFilePath))
+      )
 
-  def isGeneratedFolderCreated() : Boolean = {
-    ! Path.fromString("./target/scala-2.11/generated-classes/").descendants().isEmpty
+    val targetDirectory = new VirtualDirectory("(test)", None)
+
+    val compiler = new RuntimeCompiler(targetDirectory)
+    compiler.compile(sourceFile)
+
+    assert(targetDirectory.size > 0)
   }
 }

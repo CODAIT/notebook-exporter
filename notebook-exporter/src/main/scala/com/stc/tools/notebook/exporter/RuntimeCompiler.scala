@@ -15,59 +15,43 @@
  */
 package com.stc.tools.notebook.exporter
 
+import java.io.BufferedOutputStream
 import java.net.{URL, URLClassLoader}
 import java.nio.file.{Files, Paths}
 
-import scala.reflect.internal.util.Position
+import scala.reflect.internal.util.{BatchSourceFile, Position, SourceFile}
+import scala.reflect.io.{VirtualDirectory, VirtualFile}
 import scala.reflect.runtime._
 import scala.tools.nsc.Global
 import scala.tools.nsc.Settings
 import scala.tools.nsc.reporters.ConsoleReporter
 import scalax.file.Path
 
-class RuntimeCompiler (targetDirectory: String) {
+class RuntimeCompiler (targetDirectory: VirtualDirectory) {
 
-  if (Files.exists(Paths.get(targetDirectory)) == true) {
-    println("Existing target directory will be cleaned : " + targetDirectory) //scalastyle:ignore
-
-    // remove all files from target folder recursively
-    Path.fromString(targetDirectory).deleteRecursively(true, true)
-
-    // recreate target folder for new compilation
-    Files.createDirectory(Paths.get(targetDirectory))
-  } else {
-    println("Creating target directory : " + targetDirectory) //scalastyle:ignore
-
-    // create target folder for new compilation
-    Files.createDirectory(Paths.get(targetDirectory))
-  }
-
-  // val classLoader = Thread.currentThread.getContextClassLoader
   val classLoader = ClassLoader.getSystemClassLoader
   val urls = classLoader.asInstanceOf[URLClassLoader].getURLs();
 
   val settings = new Settings
-  for (url <- urls) settings.classpath.append(url.toString)
+  for (url <- urls) {
+    println(url.toString) //scalastyle:ignore
+    settings.classpath.append(url.toString)
+  }
 
-  settings.outdir.value = Paths.get(targetDirectory).toAbsolutePath.toString
+  settings.outputDirs.setSingleOutput(targetDirectory)
 
   val compiler = new Global(settings, new ConsoleReporter(settings) {
     override def printMessage(pos: Position, msg: String) = {
-      println(">>> " + msg) // scalastyle:ignore
+      println(">>> " + pos + " - " + msg ) // scalastyle:ignore
     }
   })
 
-  def compile(sourceFile: String): Unit = {
-    val sourceTemplate = "/templates/NotebookApplication.scala"
-    val sourceFile = getClass().getResource(sourceTemplate).getPath
-    val sourceCode = scala.io.Source.fromFile(sourceFile.toString).mkString
-
+  def compile(sourceFile: SourceFile): Unit = {
     val run: compiler.Run = new compiler.Run
 
-    run.compile(List(sourceFile))
+    // run.compile(List(sourceFilePath.toString))
+    run.compileSources(List(sourceFile))
+    // run.compileFiles(List(f.file))
   }
 }
-
-object RuntimeCompiler;
-
 
