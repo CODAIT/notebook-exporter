@@ -41,23 +41,20 @@ object NotebookExporter {
 
     val compiledSource = target.lookupName(className, false)
 
-    println(new String(compiledSource.toByteArray)) //scalastyle:ignore
+    // println(new String(compiledSource.toByteArray)) //scalastyle:ignore
 
     val manifest: Manifest = new Manifest();
     manifest.getMainAttributes().put(Attributes.Name.MANIFEST_VERSION, "1.0");
-    val application = new JarOutputStream(new FileOutputStream(jarName), manifest)
-    val jarEntry = new JarEntry("")
 
+    val application = new JarOutputStream(new FileOutputStream(jarName), manifest)
+
+    val jarEntry = new JarEntry(className)
     jarEntry.setTime(Calendar.getInstance().getTime().getTime)
     application.putNextEntry(jarEntry)
     application.write(compiledSource.toByteArray)
     application.closeEntry()
+    application.close()
   }
-
-  def writeBytes( data : Array[Char], fileContent : BufferedOutputStream ): Unit = {
-    try data.foreach( fileContent.write(_) ) finally fileContent.close;
-  }
-
 }
 
 
