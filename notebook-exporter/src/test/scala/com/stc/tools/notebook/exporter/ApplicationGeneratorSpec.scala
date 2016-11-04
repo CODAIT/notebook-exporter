@@ -25,7 +25,7 @@ class ApplicationGeneratorSpec  extends FlatSpec {
     val notebookResource = getClass().getResource("/notebooks/zeppelin/scala-tutorial.json")
     val notebook = ZeppelinNotebook(notebookResource.getPath)
     val generated = ApplicationGenerator.generateClass(notebook, "NotebookApplication.class")
-    
+
     val source = new String(generated.content)
 
     assert(source.contains("Paragraph 20150210-015259_1403135953"))

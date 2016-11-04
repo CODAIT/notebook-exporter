@@ -21,6 +21,19 @@ import java.nio.file.{Files, Paths}
 import scala.reflect.internal.util.BatchSourceFile
 import scala.reflect.io.{AbstractFile, VirtualDirectory}
 import scala.tools.nsc.io.PlainFile
+import scala.util.matching.Regex
+
+private object ParagraphParser {
+  private val caseClassPattern = "case class .*\\((.*?)\\)".r
+
+  def getDeclarations(source: String): String = {
+    caseClassPattern.findAllIn(source).mkString("\n")
+  }
+
+  def getCleanSource(source: String): String = {
+    caseClassPattern.replaceAllIn(source, "")
+  }
+}
 
 object ApplicationGenerator {
   val template =
@@ -59,12 +72,15 @@ object ApplicationGenerator {
          import sqlContext.sql
          import org.apache.spark.sql.functions._
 
+         %s
+
          def run(): Unit = {
            %s
          }
        }
     """
   def generateClass(notebook: Notebook, className: String): BatchSourceFile = {
+    val parser = ParagraphParser
     val buffer = new StringBuilder
 
     for(p <- notebook.paragraphs) {
@@ -75,7 +91,12 @@ object ApplicationGenerator {
       }
     }
 
-    println(">>>" + template.format(buffer.toString()) + "<<<") //scalastyle:ignore
-    new BatchSourceFile(className, template.format(buffer.toString()))
+    val source = buffer.toString
+    val generatedSource = template.format(
+        parser.getDeclarations(source),
+        parser.getCleanSource(source))
+
+    println(">>>" + generatedSource + "<<<") //scalastyle:ignore
+    new BatchSourceFile(className, generatedSource)
   }
 }
