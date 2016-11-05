@@ -42,7 +42,7 @@ object ApplicationGenerator {
        import org.apache.spark.{SparkConf, SparkContext}
        // import org.apache.spark.sql.SparkSession
 
-       trait BaseNotebookApplication {
+       object NotebookApplication {
          private var _args: Array[String] = null
 
          // Bootstrapping Spark Context
@@ -54,6 +54,13 @@ object ApplicationGenerator {
          implicit lazy val sc: SparkContext = new SparkContext(_conf)
          implicit lazy val sqlContext: SQLContext = new SQLContext(sc)
 
+         import sqlContext.implicits._
+         import sqlContext.sql
+         import org.apache.spark.sql.functions._
+
+         // extract case class declarations to outside
+         %s
+
          final def main(args: Array[String]): Unit = {
            // Loading Class State
            this._args = args
@@ -62,20 +69,9 @@ object ApplicationGenerator {
            run()
          }
 
-         // Every Pipeline should implement this
-         def run() : Unit
-       }
-
-       object NotebookApplication extends BaseNotebookApplication {
-
-         import sqlContext.implicits._
-         import sqlContext.sql
-         import org.apache.spark.sql.functions._
-
-         %s
-
-         def run(): Unit = {
-           %s
+         // Analytics extracted from the notebook paragraphs
+         def run() : Unit = {
+            %s
          }
        }
     """
