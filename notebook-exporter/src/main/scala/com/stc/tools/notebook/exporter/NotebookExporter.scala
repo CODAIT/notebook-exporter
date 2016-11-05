@@ -35,24 +35,28 @@ object NotebookExporter {
     var compiler = new RuntimeCompiler(target)
     compiler.compile(generatedSource)
 
+    val manifest: Manifest = new Manifest();
+    manifest.getMainAttributes().put(Attributes.Name.MANIFEST_VERSION, "1.0");
+
+
+    val application = new JarOutputStream(new FileOutputStream(jarName), manifest)
+
+
     for( f <- target.iterator) {
-      println(f.name) //scalastyle:ignore
+      println(">>> Adding to jar: " + f.name) //scalastyle:ignore
+      val jarEntry = new JarEntry(f.name)
+      jarEntry.setTime(Calendar.getInstance().getTime().getTime)
+      application.putNextEntry(jarEntry)
+      application.write(f.toByteArray)
+      application.closeEntry()
     }
 
     val compiledSource = target.lookupName(className, false)
 
     // println(new String(compiledSource.toByteArray)) //scalastyle:ignore
 
-    val manifest: Manifest = new Manifest();
-    manifest.getMainAttributes().put(Attributes.Name.MANIFEST_VERSION, "1.0");
 
-    val application = new JarOutputStream(new FileOutputStream(jarName), manifest)
 
-    val jarEntry = new JarEntry(className)
-    jarEntry.setTime(Calendar.getInstance().getTime().getTime)
-    application.putNextEntry(jarEntry)
-    application.write(compiledSource.toByteArray)
-    application.closeEntry()
     application.close()
   }
 }
