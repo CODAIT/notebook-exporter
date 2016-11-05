@@ -18,13 +18,8 @@ import org.scalatest.FlatSpec
 class NotebookExporterSpec  extends FlatSpec {
 
   it should "generate a valid jar file" in {
-    val className = "NotebookApplication.scala"
-    val jarName = "generated-application.jar"
-
     val notebookResource = getClass().getResource("/notebooks/zeppelin/scala-tutorial.json")
     val notebook = ZeppelinNotebook(notebookResource.getPath)
-    NotebookExporter.export(notebook, "NotebookApplication.class", "generated-application.jar")
-
-    assert(true)
+     NotebookExporter.export(notebook, "NotebookApplication.scala", "generated-application.jar")
   }
 }

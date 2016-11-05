@@ -19,10 +19,6 @@ version := "1.0"
 
 scalaVersion := "2.11.8"
 
-resolvers += "Local Maven Repository" at "file://" + Path.userHome.absolutePath + "/.m2/repository"
-resolvers += "Typesafe Repo" at "http://repo.typesafe.com/typesafe/releases/"
-resolvers += "Sonatype Repository" at "http://oss.sonatype.org/content/repositories/releases"
-
 // Spark dependencies as provided as they are available in spark runtime
 val json4sDependency = "3.2.11"
 val sparkDependency = "1.6.2"
@@ -40,8 +36,8 @@ libraryDependencies += "org.json4s"  %% "json4s-scalaz" % json4sDependency
 
 libraryDependencies += "org.apache.zeppelin" % "zeppelin-zengine" % zeppelinDependency
 
-libraryDependencies += "org.apache.spark"  %% "spark-core" % sparkDependency exclude("org.scalatest", "scalatest") //scalastyle:ignore
-libraryDependencies += "org.apache.spark"  %% "spark-sql" % sparkDependency exclude("org.scalatest", "scalatest") //scalastyle:ignore
+libraryDependencies += "org.apache.spark"  %% "spark-core" % sparkDependency % "provided" exclude("org.scalatest", "scalatest") //scalastyle:ignore
+libraryDependencies += "org.apache.spark"  %% "spark-sql" % sparkDependency % "provided" exclude("org.scalatest", "scalatest") //scalastyle:ignore
 
 libraryDependencies += "org.slf4j" % "slf4j-api" % "1.7.7"
 
@@ -49,3 +45,8 @@ libraryDependencies += "org.scalactic" %% "scalactic" % "3.0.0"
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.0" % "test"
 
 assemblyJarName in assembly := "notebook-exporter.jar"
+
+// forking is required to export the dependency classpath to tests,
+// so that the scala compiler can simply be called with
+// the `-usejavacp` option
+fork := true

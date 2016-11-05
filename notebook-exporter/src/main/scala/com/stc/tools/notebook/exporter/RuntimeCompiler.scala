@@ -29,28 +29,31 @@ import scalax.file.Path
 
 class RuntimeCompiler (targetDirectory: VirtualDirectory) {
 
-  val classLoader = ClassLoader.getSystemClassLoader
-  val urls = classLoader.asInstanceOf[URLClassLoader].getURLs();
-
   val settings = new Settings
-  for (url <- urls) {
-    settings.classpath.append(url.toString)
-  }
-
+  settings.usejavacp.value = true
   settings.outputDirs.setSingleOutput(targetDirectory)
 
-  val compiler = new Global(settings, new ConsoleReporter(settings) {
+  /** Custom reporter that displays the whole source file
+    * (with line-numbers) on failure. */
+  lazy val reporter = new ConsoleReporter(settings) {
     override def printMessage(pos: Position, msg: String) = {
       println(">>> " + pos + " - " + msg ) // scalastyle:ignore
+
+      //print content with line numbers
+      val src = new String(pos.source.content)
+      val message = s"----- begin ${pos.source.path} -----\n" +
+        src.split("\n").zipWithIndex.map{ case (line, idx) =>
+          f"${idx+1}%04d: $line" // +1 since lines are start at 1
+        }.mkString("\n") +
+        s"\n----- end ${pos.source.path} -----\n"
+      println(message) //scalastyle:ignore
     }
-  })
+  }
+
+  lazy val compiler = new Global(settings, reporter)
 
   def compile(sourceFile: SourceFile): Unit = {
-    val run: compiler.Run = new compiler.Run
-
-    // run.compile(List(sourceFilePath.toString))
-    run.compileSources(List(sourceFile))
-    // run.compileFiles(List(f.file))
+    (new compiler.Run).compileSources(List(sourceFile))
   }
 }
 

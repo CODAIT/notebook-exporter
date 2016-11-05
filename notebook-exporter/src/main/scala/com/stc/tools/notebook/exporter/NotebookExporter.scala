@@ -27,9 +27,9 @@ import scala.reflect.io.{AbstractFile, VirtualDirectory, VirtualFile}
 object NotebookExporter {
   val generator = ApplicationGenerator
 
-  def export(notebook: Notebook, className: String, jarName: String): Unit = {
+  def export(notebook: Notebook, sourceName: String, jarName: String): Unit = {
 
-    val generatedSource: BatchSourceFile = generator.generateClass(notebook, className)
+    val generatedSource: BatchSourceFile = generator.generateClass(notebook, sourceName)
 
     val target = new VirtualDirectory("(memory)", None)
     var compiler = new RuntimeCompiler(target)
@@ -38,25 +38,17 @@ object NotebookExporter {
     val manifest: Manifest = new Manifest();
     manifest.getMainAttributes().put(Attributes.Name.MANIFEST_VERSION, "1.0");
 
-
     val application = new JarOutputStream(new FileOutputStream(jarName), manifest)
 
+    for (classFile <- target.iterator) {
+      println("Adding to jar: " + classFile.name) //scalastyle:ignore
 
-    for( f <- target.iterator) {
-      println(">>> Adding to jar: " + f.name) //scalastyle:ignore
-      val jarEntry = new JarEntry(f.name)
+      val jarEntry = new JarEntry(classFile.name)
       jarEntry.setTime(Calendar.getInstance().getTime().getTime)
       application.putNextEntry(jarEntry)
-      application.write(f.toByteArray)
+      application.write(classFile.toByteArray)
       application.closeEntry()
     }
-
-    val compiledSource = target.lookupName(className, false)
-
-    // println(new String(compiledSource.toByteArray)) //scalastyle:ignore
-
-
-
     application.close()
   }
 }
