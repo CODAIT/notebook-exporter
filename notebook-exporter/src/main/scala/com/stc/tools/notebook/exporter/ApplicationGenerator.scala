@@ -40,7 +40,7 @@ object ApplicationGenerator {
     s"""
        import org.apache.spark.sql.SQLContext
        import org.apache.spark.{SparkConf, SparkContext}
-       // import org.apache.spark.sql.SparkSession
+       import org.apache.spark.sql.SparkSession
 
        object NotebookApplication {
          private var _args: Array[String] = null
@@ -48,11 +48,12 @@ object ApplicationGenerator {
          // Bootstrapping Spark Context
          protected lazy val _conf = new SparkConf().setAppName("Zeppelin Notebook Application")
 
-         // implicit lazy val spark: SparkSession = SparkSession.builder().config(_conf).getOrCreate()
-         // implicit lazy val sc: SparkContext = spark.sparkContext
+         implicit lazy val spark: SparkSession = SparkSession.builder().config(_conf).getOrCreate()
+         implicit lazy val sc: SparkContext = spark.sparkContext
+         implicit lazy val sqlContext: SQLContext = spark.sqlContext
 
-         implicit lazy val sc: SparkContext = new SparkContext(_conf)
-         implicit lazy val sqlContext: SQLContext = new SQLContext(sc)
+         // implicit lazy val sc: SparkContext = new SparkContext(_conf)
+         // implicit lazy val sqlContext: SQLContext = new SQLContext(sc)
 
          import sqlContext.implicits._
          import sqlContext.sql

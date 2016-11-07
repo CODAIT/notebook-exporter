@@ -21,7 +21,7 @@ scalaVersion := "2.11.8"
 
 // Spark dependencies as provided as they are available in spark runtime
 val json4sDependency = "3.2.11"
-val sparkDependency = "1.6.2"
+val sparkDependency = "2.0.1"
 val zeppelinDependency = "0.6.2"
 
 libraryDependencies += "org.scala-lang" % "scala-reflect" % scalaVersion.value
