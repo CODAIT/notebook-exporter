@@ -79,12 +79,32 @@ object ApplicationGenerator {
   def generateClass(notebook: Notebook, className: String): BatchSourceFile = {
     val parser = ParagraphParser
     val buffer = new StringBuilder
+    var sqlCounter = 0
 
     for(p <- notebook.paragraphs) {
       if (p.text.trim.startsWith("%") == false) {
         buffer.append("// Paragraph " + p.id)
         buffer.append("\n")
         buffer.append(p.text)
+      } else if (p.text.trim.startsWith("%sql") &&
+                 p.text.trim.contains("${") == false) { // we don't support parameterized queries
+        val sqlQuery = p.text.
+          substring("%sql".length).
+          trim.
+          replaceAll("\n", " ").
+          replaceAll(char2Character(34).toString,
+            char2Character(92).toString + char2Character(92).toString + char2Character(34).toString)
+
+        println(sqlQuery) //scalastyle:ignore
+
+        sqlCounter+=1
+        buffer.append("\n")
+        buffer.append("\n")
+        buffer.append("// Paragraph " + p.id)
+        buffer.append("\n")
+        buffer.append("val sqlDF" + sqlCounter + " = spark.sql(\"" + sqlQuery + "\")")
+        buffer.append("\n")
+        buffer.append("sqlDF" + sqlCounter + ".show()")
       }
     }
 
