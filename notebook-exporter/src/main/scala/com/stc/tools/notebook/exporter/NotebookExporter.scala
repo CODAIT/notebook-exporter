@@ -37,6 +37,7 @@ object NotebookExporter {
 
     val manifest: Manifest = new Manifest();
     manifest.getMainAttributes().put(Attributes.Name.MANIFEST_VERSION, "1.0");
+    manifest.getMainAttributes().put(Attributes.Name.MAIN_CLASS, sourceName);
 
     val application = new JarOutputStream(new FileOutputStream(jarName), manifest)
 
@@ -50,15 +51,5 @@ object NotebookExporter {
       application.closeEntry()
     }
     application.close()
-  }
-}
-
-
-object Test {
-  def main(args: Array[String]): Unit = {
-    val targetDirectory = Paths.get("./target/scala-2.11/generated-classes")
-    val notebookResource = getClass().getResource("/notebooks/zeppelin/scala-tutorial.json")
-    val notebook = ZeppelinNotebook(notebookResource.getPath)
-    NotebookExporter.export(notebook, "NotebookApplication.class", "generated-application.jar")
   }
 }
