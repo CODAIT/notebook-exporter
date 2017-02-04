@@ -17,7 +17,7 @@ package com.stc.tools.notebook
 
 import java.nio.file.Paths
 
-import com.stc.tools.notebook.exporter.{NotebookExporter, ZeppelinNotebook}
+import com.stc.tools.notebook.exporter.{JupyterNotebook, Notebook, NotebookExporter, ZeppelinNotebook}
 import joptsimple.util.KeyValuePair
 import joptsimple.{OptionParser, OptionSpec}
 
@@ -61,6 +61,7 @@ object Application {
 
     // currently only supporting export action
     // --export notebook.json application.jar
+    val notebookType = parameters.get(CommandLineOption.notebookType)
     val notebookLocation =
       Paths.get(parameters.get(CommandLineOption.export)).toAbsolutePath.toString
     val targetApplicationLocation =
@@ -69,10 +70,15 @@ object Application {
     println(notebookLocation)
     println(targetApplicationLocation)
 
-
-    val notebook = ZeppelinNotebook(notebookLocation.toString)
-    NotebookExporter.export(notebook, "NotebookApplication.scala", targetApplicationLocation)
-
+    if (notebookType.equalsIgnoreCase("zeppelin")) {
+      var notebook = ZeppelinNotebook(notebookLocation.toString)
+      NotebookExporter.export(notebook, "NotebookApplication.scala", targetApplicationLocation)
+    } else if (notebookType.equalsIgnoreCase("jupyter")) {
+      var notebook = JupyterNotebook(notebookLocation.toString)
+      NotebookExporter.export(notebook, "NotebookApplication.scala", targetApplicationLocation)
+    } else {
+      println("Invlid notebook type :" + notebookType)
+    }
 
     println("Application generated as " + targetApplicationLocation)
     println("Use the following hint to build your spark-submit command : ")

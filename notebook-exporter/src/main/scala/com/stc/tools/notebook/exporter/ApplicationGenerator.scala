@@ -86,6 +86,7 @@ object ApplicationGenerator {
         buffer.append("// Paragraph " + p.id)
         buffer.append("\n")
         buffer.append(p.text)
+        buffer.append("\n")
       } else if (p.text.trim.startsWith("%sql") &&
                  p.text.trim.contains("${") == false) { // we don't support parameterized queries
         val sqlQuery = p.text.
