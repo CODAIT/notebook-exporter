@@ -66,7 +66,11 @@ object JupyterNotebook {
     jupyterNotebook.cells.foreach(cell => {
       if (cell.cell_type.equalsIgnoreCase("code")) {
         id += 1
-        val paragraph = Paragraph(id.toString, None, cell.source(0) )
+        var source = new StringBuilder
+        cell.source.foreach( line => {
+          source.append(line)
+        })
+        val paragraph = Paragraph(id.toString, None, source.toString() )
         paragraphs = paragraph :: paragraphs
       }
     })
