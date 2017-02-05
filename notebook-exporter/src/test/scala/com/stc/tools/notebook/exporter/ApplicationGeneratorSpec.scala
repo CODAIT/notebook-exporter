@@ -22,7 +22,7 @@ class ApplicationGeneratorSpec  extends FlatSpec {
   "generated code" should "contain paragraph source code" in {
 
     val targetDirectory = Paths.get("./target/scala-2.11/generated-classes")
-    val notebookResource = getClass().getResource("/notebooks/zeppelin/scala-tutorial.json")
+    val notebookResource = getClass().getResource("/notebooks/zeppelin/sample-bank.json")
     val notebook = ZeppelinNotebook(notebookResource.getPath)
     val generated = ApplicationGenerator.generateClass(notebook, "NotebookApplication.class")
 

@@ -20,7 +20,7 @@ import org.scalatest.FlatSpec
 class NotebookSpec extends FlatSpec {
 
   it should "parse a valid notebook" in {
-    val notebookResource = getClass().getResource("/notebooks/zeppelin/scala-tutorial.json")
+    val notebookResource = getClass().getResource("/notebooks/zeppelin/sample-bank.json")
     val notebook = ZeppelinNotebook(notebookResource.getPath)
 
     assert(notebook.name ==  "Zeppelin Tutorial")
