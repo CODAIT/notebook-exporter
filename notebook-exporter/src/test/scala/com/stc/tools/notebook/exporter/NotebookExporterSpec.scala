@@ -26,7 +26,7 @@ class NotebookExporterSpec  extends FlatSpec {
   }
 
   it should "generate a valid jar file from Jupyter Notebook" in {
-    val notebookResource = getClass().getResource("/notebooks/jupyter/notebook-BankScenario.ipynb")
+    val notebookResource = getClass().getResource("/notebooks/jupyter/sample-bank.ipynb")
     val notebook = JupyterNotebook(notebookResource.getPath)
     NotebookExporter.export(notebook,
       "NotebookApplication.scala",
