@@ -33,3 +33,7 @@ The Notebook Tools is an Scala application built with SBT
 ```
 sbt clean compile assembly
 ```
+
+# Other information
+
+This tool was developed as part of the Operationalization efforts of the [Spark Technology Center Advisory Council](http://www.spark.tc/advisory-council/) and in close colaboration with [Rohan Sharma](https://github.com/rohancs) representing [Netflix](http://netflix.com)
