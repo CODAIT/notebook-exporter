@@ -50,4 +50,23 @@ class CommandLineParserSpec extends FlatSpec with Matchers {
     export should be ("notebook.json")
     to should be ("application.jar")
   }
+
+  it should "properly parse export commandline option with multiple notebooks" in {
+    val expected = List("--export", "notebook1.json",
+      "--export", "notebook2.json",
+      "--to", "application.jar")
+
+    val parameters = new CommandLineParser(
+      expected
+    )
+
+    val export = parameters.getAll("export")
+    val to = parameters.get("to")
+
+    println(export) //scalastyle:ignore
+    println(to) //scalastyle:ignore
+
+    export should be(List[String]("notebook1.json", "notebook2.json"))
+    to should be("application.jar")
+  }
 }

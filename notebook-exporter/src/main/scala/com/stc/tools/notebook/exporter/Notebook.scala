@@ -29,7 +29,21 @@ case class Paragraph (id: String, title: Option[String], text: String)
 
 object ZeppelinNotebook {
 
-  def apply(notebookPath: String): Notebook = ({
+  def apply(notebookPath: String): Notebook = parseNotebook(notebookPath)
+
+  def apply(multipleNotebookPaths: List[String]): Notebook = ({
+    var paragraphs: List[Paragraph] = List[Paragraph]()
+    multipleNotebookPaths.foreach( n => {
+      val tmpNotebook: Notebook = parseNotebook(n)
+      paragraphs = paragraphs ::: tmpNotebook.paragraphs
+    }
+    )
+
+    var notebook: Notebook = Notebook("Notebook Pipeline", "1", paragraphs)
+    notebook
+  })
+
+  def parseNotebook(notebookPath: String): Notebook = ({
     if (Files.exists(Paths.get(notebookPath)) == false) {
       throw new IOException("Notebook does not exist: '" + notebookPath + "'")
     }
@@ -50,8 +64,23 @@ case class JypnbParagraph (cell_type: String, source: List[String])
 
 object JupyterNotebook {
 
-  def apply(notebookPath: String): Notebook = ({
+  def apply(notebookPath: String): Notebook = parseNotebook(notebookPath)
 
+
+  def apply(multipleNotebookPaths: List[String]): Notebook = ({
+    var paragraphs: List[Paragraph] = List[Paragraph]()
+    multipleNotebookPaths.foreach( n => {
+      val tmpNotebook: Notebook = parseNotebook(n)
+      paragraphs = paragraphs ::: tmpNotebook.paragraphs
+      }
+    )
+
+    var notebook: Notebook = Notebook("Notebook Pipeline", "1", paragraphs)
+    notebook
+  })
+
+
+  private def parseNotebook(notebookPath: String): Notebook = ({
     if (Files.exists(Paths.get(notebookPath)) == false) {
       throw new IOException("Notebook does not exist: '" + notebookPath + "'")
     }
@@ -62,7 +91,7 @@ object JupyterNotebook {
     val jupyterNotebook = jsonNote.extract[JypnbNotebook]
 
     var id = 0
-    var paragraphs = List[Paragraph]()
+    var paragraphs: List[Paragraph] = List[Paragraph]()
     jupyterNotebook.cells.foreach(cell => {
       if (cell.cell_type.equalsIgnoreCase("code")) {
         id += 1

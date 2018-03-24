@@ -32,4 +32,15 @@ class NotebookExporterSpec  extends FlatSpec {
       "NotebookApplication.scala",
       "target/jupyter-generated-application.jar")
   }
+
+  it should "generate a valid jar file from multiple Jupyter Notebook" in {
+    val notebookPath1 = getClass().getResource("/notebooks/jupyter/hello.ipynb").getPath
+    val notebookPath2 = getClass().getResource("/notebooks/jupyter/helloworld.ipynb").getPath
+    val notebookPaths = notebookPath1 :: notebookPath2 :: Nil
+
+    val notebook = JupyterNotebook(notebookPaths)
+    NotebookExporter.export(notebook,
+      "NotebookApplication.scala",
+      "target/jupyter-generated-application.jar")
+  }
 }

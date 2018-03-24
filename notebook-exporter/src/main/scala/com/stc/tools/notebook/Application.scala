@@ -26,7 +26,7 @@ object Application {
 
   val usage =
     """
-      Usage: java -jar exporter.jar --export notebook.json application.jar
+      Usage: java -jar exporter.jar --export notebook.json --to application.jar
     """
 
 
@@ -62,19 +62,20 @@ object Application {
     // currently only supporting export action
     // --export notebook.json application.jar
     val notebookType = parameters.get(CommandLineOption.notebookType)
-    val notebookLocation =
-      Paths.get(parameters.get(CommandLineOption.export)).toAbsolutePath.toString
+    val notebookLocations = parameters.getAll(CommandLineOption.export).map(
+      p => Paths.get(p).toAbsolutePath.toString
+    )
     val targetApplicationLocation =
       Paths.get(parameters.get(CommandLineOption.to)).toAbsolutePath.toString
 
-    println(notebookLocation)
+    println(notebookLocations)
     println(targetApplicationLocation)
 
     if (notebookType.equalsIgnoreCase("zeppelin")) {
-      var notebook = ZeppelinNotebook(notebookLocation.toString)
+      var notebook = ZeppelinNotebook(notebookLocations)
       NotebookExporter.export(notebook, "NotebookApplication.scala", targetApplicationLocation)
     } else if (notebookType.equalsIgnoreCase("jupyter")) {
-      var notebook = JupyterNotebook(notebookLocation.toString)
+      var notebook = JupyterNotebook(notebookLocations)
       NotebookExporter.export(notebook, "NotebookApplication.scala", targetApplicationLocation)
     } else {
       println("Invlid notebook type :" + notebookType)

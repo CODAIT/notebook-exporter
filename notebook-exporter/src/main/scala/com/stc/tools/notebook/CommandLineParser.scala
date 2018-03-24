@@ -69,8 +69,7 @@ class CommandLineParser(args: Seq[String]) {
 
   def getAll(key: String): List[String] = {
     return  scala.collection.JavaConversions.asScalaBuffer(options.valuesOf(key)).
-      toList.
-      asInstanceOf[List[String]]
+      toList.asInstanceOf[List[String]]
   }
 
   def has[T](spec: OptionSpec[T]): Boolean =
