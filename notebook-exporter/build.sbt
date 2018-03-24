@@ -17,7 +17,7 @@ name := "notebook-exporter"
 
 version := "1.0"
 
-scalaVersion := "2.11.8"
+scalaVersion := "2.11.11"
 
 // Spark dependencies as provided as they are available in spark runtime
 val json4sDependency = "3.2.11"
