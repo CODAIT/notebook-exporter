@@ -61,7 +61,6 @@ libraryDependencies += "net.sf.jopt-simple" % "jopt-simple" % "4.6" // MIT
 
 libraryDependencies += "org.scalactic" %% "scalactic" % "3.0.1"
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.1" % "test"
-libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.1" % "test"
 
 mainClass in assembly := Some("com.stc.tools.notebook.Application")
 assemblyJarName in assembly := "notebook-exporter.jar"
